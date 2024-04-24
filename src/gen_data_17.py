@@ -6,7 +6,7 @@ def mkdirs(d):
     if not osp.exists(d):
         os.makedirs(d)
 
-out_labels = 'mot17.train'
+out_labels = 'mot.train'
 seq_root = '/content/drive/MyDrive/MOT_thesis/MOT17/images/train'
 label_root = '/content/drive/MyDrive/MOT_thesis/MOT17/labels_with_ids/train'
 seqs = [s for s in os.listdir(seq_root) if s.endswith('SDP')]
