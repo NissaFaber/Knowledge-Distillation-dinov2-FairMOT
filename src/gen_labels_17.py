@@ -7,8 +7,8 @@ def mkdirs(d):
         os.makedirs(d)
 
 out_labels = 'mot.train'
-seq_root = '/content/drive/MyDrive/MOT_thesis/MOT17/images/train'
-label_root = '/content/drive/MyDrive/MOT_thesis/MOT17/labels_with_ids/train'
+seq_root = '/content/MOT17/images/train'
+label_root = '/content/MOT17/labels_with_ids/train'
 seqs = [s for s in os.listdir(seq_root) if s.endswith('SDP')]
 
 tid_curr = 0
