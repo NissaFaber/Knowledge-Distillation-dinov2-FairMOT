@@ -124,7 +124,7 @@ class opts(object):
     self.parser.add_argument('--data_cfg', type=str,
                              default='../src/lib/cfg/data.json',
                              help='load data from cfg')
-    self.parser.add_argument('--data_dir', type=str, default='/content/drive/MyDrive/MOT_thesis')
+    self.parser.add_argument('--data_dir', type=str, default='/content')
 
     # loss
     self.parser.add_argument('--mse_loss', action='store_true',
