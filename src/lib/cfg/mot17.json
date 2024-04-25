@@ -1,5 +1,5 @@
 {
-    "root":"/content/drive/MyDrive/MOT_thesis",
+    "root":"/content",
     "train":
     {
         "mot17":"./data/mot17.train"
