@@ -337,7 +337,7 @@ class PoseHighResolutionNet(nn.Module):
 
         self.heads = heads
 
-        last_inp_channels = np.int(np.sum(pre_stage_channels))
+        last_inp_channels = int(np.sum(pre_stage_channels))
 
         #self.last_layer = nn.Sequential(
             #nn.Conv2d(
