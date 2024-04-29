@@ -47,6 +47,8 @@ class opts(object):
                              help='visualization threshold.')
     
     # model
+    self.parser.add_argument('--pretrainedHrnet', default=False,
+                            help = 'Depending on the input trained model, the dictstructure of model.py changes')
     self.parser.add_argument('--arch', default='dla_34', 
                              help='model architecture. Currently tested'
                                   'resdcn_34 | resdcn_50 | resfpndcn_34 |'
