@@ -11,3 +11,4 @@ openpyxl
 Pillow
 tensorboardX
 fvcore
+transformers
