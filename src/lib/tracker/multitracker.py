@@ -177,7 +177,7 @@ class JDETracker(object):
             opt.device = torch.device('cpu')
         print('Creating model...')
         self.model = create_model(opt.arch, opt.heads, opt.head_conv)
-        self.model = load_model(self.model, opt.load_model)
+        self.model = load_model(self.model, opt.load_model, pretrainedHrnet = False )
         self.model = self.model.to(opt.device)
         self.model.eval()
 
