@@ -55,10 +55,12 @@ def main(opt):
         drop_last=True
     )
 
-    # print('Starting training...')
+    print('Starting knowledge distillation...')
     # Trainer = train_factory[opt.task]
     # trainer = Trainer(opt, model, optimizer)
-    # trainer.set_device(opt.gpus, opt.chunk_sizes, opt.device)
+    knowledgeDist = Knowledge_distillation()
+    dister = knowledgeDist(opt, model, optimizer)
+    # dister.set_device(opt.gpus, opt.chunk_sizes, opt.device)
 
     # if opt.load_model != '':
     #     model, optimizer, start_epoch = load_model(
