@@ -506,6 +506,12 @@ class PoseHighResolutionNet(nn.Module):
 
         x = torch.cat([x[0], x1, x2, x3], 1)
 
+        # the input is [b_size, 3 (channels), 608, 1088  ]
+        # right here loss with dino should be calculated output dims are [b_size, 270, 152, 272]
+
+
+
+        
         z = {}
         for head in self.heads:
             z[head] = self.__getattr__(head)(x)
@@ -534,6 +540,11 @@ def fill_fc_weights(layers):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
+
+def get_activation(name):
+    def hook(model, input, output):
+        activation[name] = output.detach()
+    return hook
 
 def get_pose_net(num_layers, heads, head_conv):
     if num_layers == 32:
