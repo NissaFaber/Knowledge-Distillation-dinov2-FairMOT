@@ -515,7 +515,7 @@ class PoseHighResolutionNet(nn.Module):
         z = {}
         for head in self.heads:
             z[head] = self.__getattr__(head)(x)
-        return [z]
+        return [z], x
 
     def init_weights(self, pretrained=''):
         if os.path.isfile(pretrained):
