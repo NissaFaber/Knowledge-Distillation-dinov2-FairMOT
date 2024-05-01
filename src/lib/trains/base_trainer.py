@@ -7,7 +7,7 @@ import torch
 from progress.bar import Bar
 from models.data_parallel import DataParallel
 from utils.utils import AverageMeter
-from dinov2 import Dinov2
+from .dinov2 import Dinov2
 
 class ModleWithLoss(torch.nn.Module):
   def __init__(self, model, loss):
