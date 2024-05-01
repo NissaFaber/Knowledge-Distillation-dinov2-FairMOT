@@ -7,7 +7,7 @@ import torch
 from progress.bar import Bar
 from models.data_parallel import DataParallel
 from utils.utils import AverageMeter
-from .dinov2 import Dinov2, DINO2HRNetAdapter
+from .dinov2 import Dinov2, DINO2HRNetAdapter, DistillationLoss
 
 
 class ModleWithLoss(torch.nn.Module):
@@ -75,11 +75,14 @@ class BaseTrainer(object):
       output, embeddings, loss, loss_stats = model_with_loss(batch)
       output_teacher = self.teacher(batch)
       
-      print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
+      # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
       adapter = DINO2HRNetAdapter()
       hrnet_compatible_outputs = adapter(output_teacher)
-      print(hrnet_compatible_outputs.shape)
+      # print(hrnet_compatible_outputs.shape)
       
+      distillation_loss = DistillationLoss()
+      lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
+      # print(lossTest, 'distillation loss')
       loss = loss.mean()
       if phase == 'train':
         self.optimizer.zero_grad()
