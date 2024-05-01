@@ -16,14 +16,16 @@ class ModleWithLoss(torch.nn.Module):
     self.loss = loss
   
   def forward(self, batch):
-    outputs = self.model(batch['input'])
+    outputs, embeddings = self.model(batch['input'])
     loss, loss_stats = self.loss(outputs, batch)
-    return outputs[-1], loss, loss_stats
+    return outputs[-1], embeddings, loss, loss_stats
 
 class BaseTrainer(object):
   def __init__(
     self, opt, model, optimizer=None):
+    
     self.opt = opt
+    self.teacher = Dinov2(opt)
     self.optimizer = optimizer
     self.loss_stats, self.loss = self._get_losses(opt)
     self.model_with_loss = ModleWithLoss(model, self.loss)
@@ -46,6 +48,7 @@ class BaseTrainer(object):
     model_with_loss = self.model_with_loss
     if phase == 'train':
       model_with_loss.train()
+      #teacher already in eval() mode
     else:
       if len(self.opt.gpus) > 1:
         model_with_loss = self.model_with_loss.module
@@ -68,8 +71,10 @@ class BaseTrainer(object):
         if k != 'meta':
           batch[k] = batch[k].to(device=opt.device, non_blocking=True)
 
-      output, loss, loss_stats = model_with_loss(batch)
-      print(output.shape, loss, 'output shape and loss---------------------------')
+      output, embeddings, loss, loss_stats = model_with_loss(batch)
+      output_teacher = self.teacher.extract_features(batch)
+      
+      print(embeddings,'student____________________________________________\n', output_teacher, 'teacher_____________________________________________' )
       loss = loss.mean()
       if phase == 'train':
         self.optimizer.zero_grad()
