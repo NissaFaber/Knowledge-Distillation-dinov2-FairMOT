@@ -1,5 +1,5 @@
 import torch
-from transformers import AutoFeatureExtractor, AutoModelnov2ForImageClassification
+from transformers import AutoFeatureExtractor, AutoModel
 
 from PIL import Image
 import requests
