@@ -83,9 +83,28 @@ class DINO2HRNetAdapter(nn.Module):
 
         return x
 
+
+class DistillationLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.mse_loss = nn.MSELoss()
+
+    def forward(self, teacher_features, student_features):
+        # Calculate the mean squared error between teacher and student features
+        loss = self.mse_loss(student_features, teacher_features)
+        return loss
+
+# Example usage
+distillation_loss = DistillationLoss()
+teacher_features = torch.randn(10, 270, 152, 272)  # Simulated output from the teacher
+student_features = torch.randn(10, 270, 152, 272)  # Simulated output from the student
+loss = distillation_loss(teacher_features, student_features)
+print("Distillation Loss:", loss.item())
+
+
 # Example initialization and forward pass
-adapter = DINO2HRNetAdapter()
-dino_outputs = torch.randn(10, 197, 768)  # Example batch of outputs from DINOv2
-hrnet_compatible_outputs = adapter(dino_outputs)
-print(hrnet_compatible_outputs.shape)  # Should print torch.Size([10, 270, 152, 272])
+# adapter = DINO2HRNetAdapter()
+# dino_outputs = torch.randn(10, 197, 768)  # Example batch of outputs from DINOv2
+# hrnet_compatible_outputs = adapter(dino_outputs)
+# print(hrnet_compatible_outputs.shape)  # Should print torch.Size([10, 270, 152, 272])
 
