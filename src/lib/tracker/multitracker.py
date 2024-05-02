@@ -171,10 +171,9 @@ class STrack(BaseTrack):
 class JDETracker(object):
     def __init__(self, opt, frame_rate=30):
         self.opt = opt
-        if opt.gpus[0] >= 0:
-            opt.device = torch.device('cuda')
-        else:
-            opt.device = torch.device('cpu')
+        print(torch.cuda.is_available())
+        opt.device = torch.device('cuda' if opt.gpus[0] >= 0 else 'cpu')
+
         print('Creating model...')
         self.model = create_model(opt.arch, opt.heads, opt.head_conv)
         self.model = load_model(self.model, opt.load_model, pretrainedHrnet = False )
@@ -240,8 +239,10 @@ class JDETracker(object):
 
         ''' Step 1: Network forward, get detections & embeddings'''
         with torch.no_grad():
-            output = self.model(im_blob)[-1]
+            output = self.model(im_blob)[0][0]
+            # print(output)
             hm = output['hm'].sigmoid_()
+            # hm = output['hm']
             wh = output['wh']
             id_feature = output['id']
             id_feature = F.normalize(id_feature, dim=1)
