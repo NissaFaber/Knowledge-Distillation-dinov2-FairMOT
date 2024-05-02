@@ -21,15 +21,32 @@ class ModleWithLoss(torch.nn.Module):
     loss, loss_stats = self.loss(outputs, batch)
     return outputs[-1], embeddings, loss, loss_stats
 
+
+class dinoModelloss(torch.nn.Module):
+  def __init__(self, model, opt):
+    super(dinoModelloss, self).__init__()
+    self.model = model
+    self.loss = DistillationLoss()
+    self.adapter = DINO2HRNetAdapter(device = opt.device)
+
+  def forward(self, batch, embeddings):
+    outputs = self.model(batch)
+    hrnet_compatible_outputs = self.adapter(outputs)
+    loss = self.loss(hrnet_compatible_outputs, embeddings)
+    return loss
+    
+
+
+
 class BaseTrainer(object):
   def __init__(
     self, opt, model, optimizer=None):
-    
     self.opt = opt
     self.teacher = Dinov2(opt = opt)
     self.optimizer = optimizer
     self.loss_stats, self.loss = self._get_losses(opt)
     self.model_with_loss = ModleWithLoss(model, self.loss)
+    self.teacher_with_loss = dinoModelloss(self.teacher, opt)
     self.optimizer.add_param_group({'params': self.loss.parameters()})
 
   def set_device(self, gpus, chunk_sizes, device):
@@ -38,6 +55,7 @@ class BaseTrainer(object):
         self.model_with_loss, device_ids=gpus, 
         chunk_sizes=chunk_sizes).to(device)
     else:
+      self.teacher = self.teacher.to(device)
       self.model_with_loss = self.model_with_loss.to(device)
     
     for state in self.optimizer.state.values():
@@ -47,6 +65,7 @@ class BaseTrainer(object):
 
   def run_epoch(self, phase, epoch, data_loader):
     model_with_loss = self.model_with_loss
+    teacher_with_loss = self.teacher_with_loss
     if phase == 'train':
       model_with_loss.train()
       #teacher already in eval() mode
@@ -73,17 +92,19 @@ class BaseTrainer(object):
           batch[k] = batch[k].to(device=opt.device, non_blocking=True)
 
       output, embeddings, loss, loss_stats = model_with_loss(batch)
-      output_teacher = self.teacher(batch)
+      loss_teacher = teacher_with_loss(batch, embeddings)
+
       
       # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
-      adapter = DINO2HRNetAdapter()
-      hrnet_compatible_outputs = adapter(output_teacher)
+      # adapter = DINO2HRNetAdapter(device = opt.device)
+      # hrnet_compatible_outputs = adapter(output_teacher).to(opt.device)
       # print(hrnet_compatible_outputs.shape)
       
-      distillation_loss = DistillationLoss()
-      lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
+      # distillation_loss = DistillationLoss()
+      # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
       # print(lossTest, 'distillation loss')
-      loss = loss.mean()
+      
+      loss = loss.mean() + loss_teacher
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
@@ -97,7 +118,7 @@ class BaseTrainer(object):
       for l in avg_loss_stats:
         avg_loss_stats[l].update(
           loss_stats[l].mean().item(), batch['input'].size(0))
-        Bar.suffix = Bar.suffix + '|{} {:.4f} '.format(l, avg_loss_stats[l].avg)
+        Bar.suffix = Bar.suffix + '|{} {} {:.4f} '.format(loss_teacher, l, avg_loss_stats[l].avg)
       if not opt.hide_data_time:
         Bar.suffix = Bar.suffix + '|Data {dt.val:.3f}s({dt.avg:.3f}s) ' \
           '|Net {bt.avg:.3f}s'.format(dt=data_time, bt=batch_time)
