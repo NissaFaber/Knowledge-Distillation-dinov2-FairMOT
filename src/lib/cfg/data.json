@@ -1,5 +1,5 @@
 {
-    "root":"/content",
+    "root":"/home/nfaber/repo/dataset",
     "train":
     {
         "mot17":"./data/mot17.train",
