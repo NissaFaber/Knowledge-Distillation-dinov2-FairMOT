@@ -94,6 +94,7 @@ class BaseTrainer(object):
       output, embeddings, loss, loss_stats = model_with_loss(batch)
       loss_teacher = teacher_with_loss(batch, embeddings)
 
+      print(loss_teacher,'check')
       
       # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
       # adapter = DINO2HRNetAdapter(device = opt.device)
