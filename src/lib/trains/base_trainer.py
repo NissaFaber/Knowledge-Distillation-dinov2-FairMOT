@@ -94,14 +94,14 @@ class BaseTrainer(object):
       output, embeddings, loss, loss_stats = model_with_loss(batch)
       loss_teacher = teacher_with_loss(batch, embeddings)
 
-      print(loss_teacher,'check')
+      # print(loss_teacher,'check')
       
       # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
       # adapter = DINO2HRNetAdapter(device = opt.device)
       # hrnet_compatible_outputs = adapter(output_teacher).to(opt.device)
       # print(hrnet_compatible_outputs.shape)
       
-      # distillation_loss = DistillationLoss()
+      # distillation_loss = DistillationLoss(device = opt.device)
       # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
       # print(lossTest, 'distillation loss')
       
