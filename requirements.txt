@@ -11,4 +11,4 @@ openpyxl
 Pillow
 tensorboardX
 fvcore
-transformers
+transformers==4.38.2
