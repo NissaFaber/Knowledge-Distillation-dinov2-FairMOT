@@ -48,6 +48,7 @@ class BaseTrainer(object):
     self.model_with_loss = ModleWithLoss(model, self.loss)
     self.teacher_with_loss = dinoModelloss(self.teacher, opt)
     self.optimizer.add_param_group({'params': self.loss.parameters()})
+    self.optimizer.add_param_group({'params': self.teacher_with_loss.adapter.parameters()})
 
   def set_device(self, gpus, chunk_sizes, device):
     if len(gpus) > 1:
