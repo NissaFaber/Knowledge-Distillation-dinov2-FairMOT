@@ -16,7 +16,16 @@ class Dinov2(nn.Module):
         self.model.eval()
 
     def forward(self, batch_images):
-        inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
+        def forward(self, batch_images):
+        # Check if images need rescaling or not, and adjust preprocessing accordingly
+        if batch_images['input'].max() > 1.0:
+            # Assume images are in [0, 255] and need rescaling
+            inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
+        else:
+            # Assume images are already in [0, 1], handle accordingly
+            # This may require a custom preprocessing path if rescaling cannot be disabled
+            inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True, do_rescale=False)
+
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
         outputs = self.model(**inputs)
         features = outputs.last_hidden_state
