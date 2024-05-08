@@ -16,7 +16,6 @@ class Dinov2(nn.Module):
         self.model.eval()
 
     def forward(self, batch_images):
-        def forward(self, batch_images):
         # Check if images need rescaling or not, and adjust preprocessing accordingly
         if batch_images['input'].max() > 1.0:
             # Assume images are in [0, 255] and need rescaling
