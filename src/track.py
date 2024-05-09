@@ -22,7 +22,8 @@ import datasets.dataset.jde as datasets
 from tracking_utils.utils import mkdir_if_missing
 from opts import opts
 
-
+print(torch.cuda.is_available())
+print(torch.cuda.empty_cache())
 def write_results(filename, results, data_type):
     if data_type == 'mot':
         save_format = '{frame},{id},{x1},{y1},{w},{h},1,-1,-1,-1\n'
