@@ -93,7 +93,7 @@ class BaseTrainer(object):
         if k != 'meta':
           batch[k] = batch[k].to(device=opt.device, non_blocking=True)
 
-      print(dinoModelloss.DINO2HRNetAdapter.Conv2d.weight)
+      # print(dinoModelloss.DINO2HRNetAdapter.Conv2d.weight)
       output, embeddings, loss, loss_stats = model_with_loss(batch)
       loss_teacher = teacher_with_loss(batch, embeddings)
 
