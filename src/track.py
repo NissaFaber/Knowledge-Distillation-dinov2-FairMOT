@@ -23,7 +23,7 @@ from tracking_utils.utils import mkdir_if_missing
 from opts import opts
 
 
-print(torch.cuda_is_available())
+print(torch.cuda.is_available())
 print(torch.cuda.empty_cache)
 def write_results(filename, results, data_type):
     if data_type == 'mot':
