@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from transformers import AutoFeatureExtractor, Dinov2Model, Dinov2Config
+from transformers import ViTImageProcessor, Dinov2Model, Dinov2Config
 
 class Dinov2(nn.Module):
     def __init__(self, opt):
@@ -11,19 +11,14 @@ class Dinov2(nn.Module):
         )
         model_name = "facebook/dino-vitb8"
         self.device = torch.device(opt.device)
-        self.feature_extractor = AutoFeatureExtractor.from_pretrained(model_name)
+        self.feature_extractor = ViTImageProcessor.from_pretrained(model_name, do_rescale=False)
         self.model = Dinov2Model(config)
         self.model.eval()
 
     def forward(self, batch_images):
         # Check if images need rescaling or not, and adjust preprocessing accordingly
-        if batch_images['input'].max() > 1.0:
-            # Assume images are in [0, 255] and need rescaling
-            inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
-        else:
-            # Assume images are already in [0, 1], handle accordingly
-            # This may require a custom preprocessing path if rescaling cannot be disabled
-            inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True, do_rescale=False)
+        
+        inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
 
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
         outputs = self.model(**inputs)
