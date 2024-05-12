@@ -18,7 +18,7 @@ class Dinov2(nn.Module):
             reshape_hidden_states=True,
             output_hidden_states=True
         )
-        model_name = dinov2_models['opt.dinov2']
+        model_name = dinov2_models[opt.dinov2]
         self.device = torch.device(opt.device)
         self.feature_extractor = ViTImageProcessor.from_pretrained(model_name, do_rescale=False)
         self.model = Dinov2Model(config)
