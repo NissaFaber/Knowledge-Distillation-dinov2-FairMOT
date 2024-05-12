@@ -2,6 +2,15 @@ import torch
 from torch import nn
 from transformers import ViTImageProcessor, Dinov2Model, Dinov2Config
 
+
+dinov2_models = {'base': 'facebook/dinov2-base' ,
+                 'small': 'facebook/dinov2-small',
+                 'large' : 'facebook/dinov2-large',
+                 'giant' : 'facebook/dinov2-giant'}
+
+
+
+
 class Dinov2(nn.Module):
     def __init__(self, opt):
         super(Dinov2, self).__init__()
@@ -9,7 +18,7 @@ class Dinov2(nn.Module):
             reshape_hidden_states=True,
             output_hidden_states=True
         )
-        model_name = "facebook/dino-vitb8"
+        model_name = dinov2_models['opt.dinov2']
         self.device = torch.device(opt.device)
         self.feature_extractor = ViTImageProcessor.from_pretrained(model_name, do_rescale=False)
         self.model = Dinov2Model(config)
