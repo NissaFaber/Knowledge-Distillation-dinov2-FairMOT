@@ -60,6 +60,8 @@ class opts(object):
                                   '256 for resnets and 256 for dla.')
     self.parser.add_argument('--down_ratio', type=int, default=4,
                              help='output stride. Currently only supports 4.')
+    self.parser.add_argument('--dinov2', default='base',
+                             help='What dinov2 model is used')
 
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
@@ -126,7 +128,7 @@ class opts(object):
     self.parser.add_argument('--data_cfg', type=str,
                              default='../src/lib/cfg/data.json',
                              help='load data from cfg')
-    self.parser.add_argument('--data_dir', type=str, default='/home/nfaber/repo/dataset')
+    self.parser.add_argument('--data_dir', type=str, default='/content')
 
     # loss
     self.parser.add_argument('--mse_loss', action='store_true',
