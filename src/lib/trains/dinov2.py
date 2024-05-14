@@ -20,9 +20,10 @@ class Dinov2(nn.Module):
         self.device = torch.device(opt.device)
         self.feature_extractor = ViTImageProcessor.from_pretrained(dinov2_models[opt.dinov2], size={'height': 1088, 'width': 608}, do_rescale=False, reshape_hidden_states=True)
         config = Dinov2Config.from_pretrained(dinov2_models[opt.dinov2], reshape_hidden_states=True, output_hidden_states=True)
-        self.model = AutoBackbone.from_config(config)
-        print(self.model.config)
+        self.model = AutoBackbone.from_config(config).to(self.device)
+        # print(self.model.config)
         # self.model = Dinov2Model.from_pretrained('facebook/dinov2-small')
+        
         self.model.eval()
 
     def forward(self, batch_images):
@@ -44,12 +45,12 @@ class Dinov2(nn.Module):
 
 
 class DINO2HRNetAdapter(nn.Module):
-    def __init__(self, hidden_size=768, target_shape=(270, 152, 272), device='0'):
+    def __init__(self, hidden_size=384, target_shape=(270, 152, 272), device='0'):
         super().__init__()
         self.target_channels, self.target_height, self.target_width = target_shape
-
+        
         # Upsampling layer to increase resolution
-        self.upsample = nn.Upsample(size=(152, 224), mode='bilinear', align_corners=False)  # Upsample to an intermediate size
+        self.upsample = nn.Upsample(size=(152, 224), mode='bilinear', align_corners=False).to(device)  # Upsample to an intermediate size
 
         # Convolution to reduce channel depth and adjust to the target channel depth
         self.channel_adjust_conv = nn.Conv2d(hidden_size, self.target_channels, kernel_size=(1, 1), stride=1).to(device)
