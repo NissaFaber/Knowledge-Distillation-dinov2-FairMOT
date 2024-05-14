@@ -44,7 +44,7 @@ class Dinov2(nn.Module):
 
 
 class DINO2HRNetAdapter(nn.Module):
-    def __init__(self, hidden_size=768, target_shape=(270, 152, 272), device='cpu'):
+    def __init__(self, hidden_size=768, target_shape=(270, 152, 272), device='0'):
         super().__init__()
         self.target_channels, self.target_height, self.target_width = target_shape
 
