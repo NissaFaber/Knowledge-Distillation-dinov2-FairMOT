@@ -62,7 +62,8 @@ class opts(object):
                              help='output stride. Currently only supports 4.')
     self.parser.add_argument('--dinov2', default='base',
                              help='What dinov2 model is used')
-
+    self.parser.add_argument('--alpha', type=float, default=1,
+                            help= 'coeficient determining the influence of dinov2 on the loss function')
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
                              help='input height and width. -1 for default from '
