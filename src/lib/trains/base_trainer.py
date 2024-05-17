@@ -109,7 +109,7 @@ class BaseTrainer(object):
       # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
       # print(lossTest, 'distillation loss')
       
-      loss = loss.mean() + self.alpha = loss_teacher
+      loss = loss.mean() + self.alpha * loss_teacher
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
