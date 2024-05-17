@@ -44,6 +44,7 @@ class BaseTrainer(object):
     self.opt = opt
     self.teacher = Dinov2(opt = opt)
     self.optimizer = optimizer
+    self.alpha = opt.alpha
     self.loss_stats, self.loss = self._get_losses(opt)
     self.model_with_loss = ModleWithLoss(model, self.loss)
     self.teacher_with_loss = dinoModelloss(self.teacher, opt)
@@ -108,7 +109,7 @@ class BaseTrainer(object):
       # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
       # print(lossTest, 'distillation loss')
       
-      loss = loss.mean() + loss_teacher
+      loss = loss.mean() + self.alpha = loss_teacher
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
