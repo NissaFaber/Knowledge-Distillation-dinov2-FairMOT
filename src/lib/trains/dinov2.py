@@ -48,7 +48,7 @@ class Dinov2(nn.Module):
 class DINO2HRNetAdapter(nn.Module):
     def __init__(self, opt, target_shape=(270, 152, 272), device='0'):
         super().__init__()
-        self.hidden_size = opt.dinov2][1]
+        self.hidden_size = opt.dinov2[1]
         self.target_channels, self.target_height, self.target_width = target_shape
         
         # Upsampling layer to increase resolution
