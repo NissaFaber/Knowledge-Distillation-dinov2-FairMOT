@@ -1,4 +1,5 @@
 
+
 import torch
 from torch import nn
 from transformers import ViTImageProcessor, Dinov2Model, Dinov2Config, AutoBackbone
@@ -6,10 +7,10 @@ from torch.functional import F
 
 
 
-dinov2_models = {'base': 'facebook/dinov2-base' ,
-                 'small': 'facebook/dinov2-small',
-                 'large' : 'facebook/dinov2-large',
-                 'giant' : 'facebook/dinov2-giant'}
+dinov2_models = {'base': ['facebook/dinov2-base', 384] ,
+                 'small': ['facebook/dinov2-small', 768 ],
+                 'large' : ['facebook/dinov2-large', 1024],
+                 'giant' : ['facebook/dinov2-giant', 1536]}
 
 
 
@@ -18,8 +19,8 @@ class Dinov2(nn.Module):
     def __init__(self, opt):
         super(Dinov2, self).__init__()
         self.device = torch.device(opt.device)
-        self.feature_extractor = ViTImageProcessor.from_pretrained(dinov2_models[opt.dinov2], size={'height': 1088, 'width': 608}, do_rescale=False, reshape_hidden_states=True)
-        config = Dinov2Config.from_pretrained(dinov2_models[opt.dinov2], reshape_hidden_states=True, output_hidden_states=True)
+        self.feature_extractor = ViTImageProcessor.from_pretrained(dinov2_models[opt.dinov2][0], size={'height': 1088, 'width': 608}, do_rescale=False, reshape_hidden_states=True)
+        config = Dinov2Config.from_pretrained(dinov2_models[opt.dinov2][0], reshape_hidden_states=True, output_hidden_states=True)
         self.model = AutoBackbone.from_config(config).to(self.device)
         # print(self.model.config)
         # self.model = Dinov2Model.from_pretrained('facebook/dinov2-small')
@@ -45,8 +46,9 @@ class Dinov2(nn.Module):
 
 
 class DINO2HRNetAdapter(nn.Module):
-    def __init__(self, hidden_size=384, target_shape=(270, 152, 272), device='0'):
+    def __init__(self, opt, target_shape=(270, 152, 272), device='0'):
         super().__init__()
+        self.hidden_size = opt.dinov2[1]
         self.target_channels, self.target_height, self.target_width = target_shape
         
         # Upsampling layer to increase resolution
@@ -87,4 +89,3 @@ class DistillationLoss(nn.Module):
 # distillation_loss = DistillationLoss(device=opt.device)
 # adapter = DINO2HRNetAdapter(device=opt.device)
 # dinov2 = Dinov2(opt)
-
