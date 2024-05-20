@@ -94,22 +94,10 @@ class BaseTrainer(object):
         if k != 'meta':
           batch[k] = batch[k].to(device=opt.device, non_blocking=True)
 
-      # print(dinoModelloss.DINO2HRNetAdapter.Conv2d.weight)
       output, embeddings, loss, loss_stats = model_with_loss(batch)
-      loss_teacher = teacher_with_loss(batch, embeddings)
+      loss_teacher = teacher_with_loss(batch, embeddings)      
 
-      # print(loss_teacher,'check')
-      
-      # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
-      # adapter = DINO2HRNetAdapter(device = opt.device)
-      # hrnet_compatible_outputs = adapter(output_teacher).to(opt.device)
-      # print(hrnet_compatible_outputs.shape)
-      
-      # distillation_loss = DistillationLoss(device = opt.device)
-      # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
-      # print(lossTest, 'distillation loss')
-      
-      loss = loss.mean() + self.alpha * loss_teacher
+      loss = ((1 - self.alpha) * loss.mean()) + (self.alpha * loss_teacher)
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
