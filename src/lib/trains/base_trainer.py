@@ -27,7 +27,7 @@ class dinoModelloss(torch.nn.Module):
     super(dinoModelloss, self).__init__()
     self.model = model
     self.loss = DistillationLoss(device = opt.device)
-    self.adapter = DINO2HRNetAdapter(opt,device = opt.device)
+    self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
@@ -50,6 +50,7 @@ class BaseTrainer(object):
     self.teacher_with_loss = dinoModelloss(self.teacher, opt)
     self.optimizer.add_param_group({'params': self.loss.parameters()})
     self.optimizer.add_param_group({'params': self.teacher_with_loss.adapter.parameters()})
+
 
   def set_device(self, gpus, chunk_sizes, device):
     if len(gpus) > 1:
@@ -94,19 +95,9 @@ class BaseTrainer(object):
           batch[k] = batch[k].to(device=opt.device, non_blocking=True)
 
       output, embeddings, loss, loss_stats = model_with_loss(batch)
-      loss_teacher = teacher_with_loss(batch, embeddings)
+      loss_teacher = teacher_with_loss(batch, embeddings)      
 
-      
-      # print(embeddings, embeddings.shape,'student____________________________________________\n', output_teacher, output_teacher.shape, 'teacher_____________________________________________' )
-      # adapter = DINO2HRNetAdapter(device = opt.device)
-      # hrnet_compatible_outputs = adapter(output_teacher).to(opt.device)
-      # print(hrnet_compatible_outputs.shape)
-      
-      # distillation_loss = DistillationLoss()
-      # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
-      # print(lossTest, 'distillation loss')
-      
-      loss = loss.mean() + (self.alpha * loss_teacher)
+      loss = ((1 - self.alpha) * loss.mean()) + (self.alpha * loss_teacher)
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
@@ -137,7 +128,6 @@ class BaseTrainer(object):
     bar.finish()
     ret = {k: v.avg for k, v in avg_loss_stats.items()}
     ret['time'] = bar.elapsed_td.total_seconds() / 60.
-    print("epoch: ",epoch)
     return ret, results
 
   
