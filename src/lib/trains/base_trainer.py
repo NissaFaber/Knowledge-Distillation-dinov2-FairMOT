@@ -106,7 +106,7 @@ class BaseTrainer(object):
       # lossTest = distillation_loss(hrnet_compatible_outputs, embeddings)
       # print(lossTest, 'distillation loss')
       
-      loss = loss.mean() + self.alpha * loss_teacher
+      loss = loss.mean() + (self.alpha * loss_teacher)
       if phase == 'train':
         self.optimizer.zero_grad()
         loss.backward()
@@ -137,6 +137,7 @@ class BaseTrainer(object):
     bar.finish()
     ret = {k: v.avg for k, v in avg_loss_stats.items()}
     ret['time'] = bar.elapsed_td.total_seconds() / 60.
+    print("epoch: ",epoch)
     return ret, results
 
   
