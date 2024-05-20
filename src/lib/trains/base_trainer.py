@@ -27,7 +27,7 @@ class dinoModelloss(torch.nn.Module):
     super(dinoModelloss, self).__init__()
     self.model = model
     self.loss = DistillationLoss()
-    self.adapter = DINO2HRNetAdapter(device = opt.device)
+    self.adapter = DINO2HRNetAdapter(opt,device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
