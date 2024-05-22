@@ -26,13 +26,18 @@ class dinoModelloss(torch.nn.Module):
   def __init__(self, model, opt):
     super(dinoModelloss, self).__init__()
     self.model = model
-    self.loss = DistillationLoss(device = opt.device)
+    self.loss_function = opt.loss_function 
+    self.loss = DistillationLoss(device = opt.device, loss_function = self.loss_function)
     self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
-    hrnet_compatible_outputs = self.adapter(outputs)
-    loss = self.loss(hrnet_compatible_outputs, embeddings)
+    target = self.batch['input'].size(0)
+    if self.loss_function is 'MSE':
+      hrnet_compatible_outputs = self.adapter(outputs)
+      loss = self.loss(hrnet_compatible_outputs, embeddings)
+    else:
+      loss = self.loss(outputs, embeddings, target)
     return loss
     
 
