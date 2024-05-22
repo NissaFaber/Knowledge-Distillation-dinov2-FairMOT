@@ -32,12 +32,12 @@ class dinoModelloss(torch.nn.Module):
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
-    target = self.batch['input'].size(0)
-    if self.loss_function is 'MSE':
+    if self.loss_function == 'MSE':
       hrnet_compatible_outputs = self.adapter(outputs)
       loss = self.loss(hrnet_compatible_outputs, embeddings)
     else:
-      loss = self.loss(outputs, embeddings, target)
+      hrnet_compatible_outputs = self.adapter(outputs)
+      loss = self.loss(hrnet_compatible_outputs, embeddings)
     return loss
     
 
