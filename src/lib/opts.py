@@ -64,7 +64,7 @@ class opts(object):
                              help='What dinov2 model is used')
     self.parser.add_argument('--alpha', type=float, default=1,
                             help= 'coefficient determining the influence of dinov2 on the loss function')
-    self.parser.add_argument('--loss', default= 'MSE',
+    self.parser.add_argument('--loss_function', default= 'MSE',
                             help = 'type of loss function used')
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
