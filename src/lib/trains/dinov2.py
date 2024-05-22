@@ -75,32 +75,29 @@ class DINO2HRNetAdapter(nn.Module):
 
 
 # class HRNetDINO2Adapter(nn.Module):
-#     def __init__(self, opt, target_shape=(270, 152, 272), device='0'):
-#         super().__init__()
-#         hidden_size = dinov2_models[opt.dinov2][1]
-#         self.target_channels, self.target_height, self.target_width = target_shape
+    def __init__(self, opt, target_shape=(768, 77, 43), device='cuda'):
+        super().__init__()
+        input_shape = (270, 152, 272)
+        hidden_size = dinov2_models[opt.dinov2][1]
+        self.input_channels, self.input_height, self.input_width = input_shape
+        self.target_channels, self.target_height, self.target_width = target_shape
         
-#         # Upsampling layer to increase resolution
-#         self.upsample = F.interpolate(size=(77, 43), mode='bilinear', align_corners=False).to(device)  # Upsample to an intermediate size
+        # Convolution to increase channel depth to hidden_size
+        self.channel_increase_conv = nn.Conv2d(self.input_channels, hidden_size, kernel_size=(1, 1), stride=1).to(device)
 
-#         # Convolution to reduce channel depth and adjust to the target channel depth
-#         self.channel_adjust_conv = nn.Conv2d(hidden_size, self.target_channels, kernel_size=(1, 1), stride=1).to(device)
+        # Downsampling layer to decrease resolution
+        self.downsample = nn.Upsample(size=(77, 43), mode='bilinear', align_corners=False).to(device)  # Downsample to the target size
 
-#         # Adaptive pooling to match the exact target dimensions
-#         self.adaptive_pool = nn.AdaptiveAvgPool2d((self.target_height, self.target_width)).to(device)
-
-#     def forward(self, x):
-#         # x shape: [batch, channels, height, width] = [B, 768, 77, 43]
+    def forward(self, x):
+        # x shape: [batch, channels, height, width] = [B, 270, 152, 272]
         
-#         # Upsample spatial dimensions
-#         x = self.upsample(x)  # Upsample to intermediate size [B, 768, 152, 224]
+        # Adjust channel dimensions
+        x = self.channel_increase_conv(x)  # Increase channels [B, hidden_size, 152, 272]
 
-#         # Adjust channel dimensions
-#         x = self.channel_adjust_conv(x)  # Reduce channels [B, 270, 152, 224]
+        # Downsample spatial dimensions
+        x = self.downsample(x)  # Downsample to target size [B, hidden_size, 77, 43]
 
-#         # Adaptive pool to target dimensions
-#         x = self.adaptive_pool(x)  # Final output size [B, 270, 152, 272]
-#         return x
+        return x
 
 
 class DistillationLoss(nn.Module):
@@ -108,19 +105,26 @@ class DistillationLoss(nn.Module):
         super().__init__()
         self.device = device
         self.loss_function = loss_function
-        if loss_function is 'MSE':
+        # print(loss_function, '___________________________')
+        if loss_function == 'MSE':
           self.loss = nn.MSELoss()
-        elif loss_function is 'cosine':
+        elif loss_function == 'cosine':
           self.loss = nn.CosineEmbeddingLoss()
         else:
           assert "no valid loss function given"
           
   
-    def forward(self, teacher_features, student_features, target=None):
-        if self.loss_function is 'MSE':
+    def forward(self, teacher_features, student_features):
+        if self.loss_function == 'MSE':
           teacher_features, student_features = teacher_features.to(self.device), student_features.to(self.device)
           return self.loss(student_features, teacher_features).to(self.device)
-        elif self.loss_function is 'cosine':
+        elif self.loss_function == 'cosine':
+          target = teacher_features.shape[0]
+          # print(target,'_____________________')
           teacher_features, student_features = teacher_features.to(self.device), student_features.to(self.device)
-          return self.loss(student_features, teacher_features, target=torch.ones(target).to(device))
+          input1_flat = student_features.view(student_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
+          input2_flat = teacher_features.view(teacher_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
+
+          # print(self.loss(input1_flat, input2_flat, target=torch.ones(1).to(self.device)), '___________________________________________________')
+          return self.loss(input1_flat, input2_flat, target=torch.ones(1).to(self.device))
           
