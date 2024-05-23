@@ -35,8 +35,7 @@ class dinoModelloss(torch.nn.Module):
     if self.loss_function == 'MSE':
       hrnet_compatible_outputs = self.adapter(outputs)
       loss = self.loss(hrnet_compatible_outputs, embeddings)
-    else:
-      hrnet_compatible_outputs = self.adapter(outputs)
+    elif self.loss_function == 'cosine':
       loss = self.loss(hrnet_compatible_outputs, embeddings)
     return loss
     
