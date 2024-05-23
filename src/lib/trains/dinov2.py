@@ -22,25 +22,13 @@ class Dinov2(nn.Module):
         self.feature_extractor = ViTImageProcessor.from_pretrained(dinov2_models[opt.dinov2][0], size={'height': 1088, 'width': 608}, do_rescale=False, reshape_hidden_states=True)
         config = Dinov2Config.from_pretrained(dinov2_models[opt.dinov2][0], reshape_hidden_states=True, output_hidden_states=True)
         self.model = AutoBackbone.from_config(config).to(self.device)
-        # print(self.model.config)
-        # self.model = Dinov2Model.from_pretrained('facebook/dinov2-small')
-        
         self.model.eval()
 
     def forward(self, batch_images):
         inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
-        # print(inputs['pixel_values'].shape)
-
         outputs = self.model(**inputs)
         features = outputs[0][0]
-
-        # Access positional embeddings
-        # pos_embeddings = self.model.embeddings.position_embeddings
-
-        # print(pos_embeddings)
-        # print(features.shape)
-
         return features
 
 
@@ -105,7 +93,6 @@ class DistillationLoss(nn.Module):
         super().__init__()
         self.device = device
         self.loss_function = loss_function
-        # print(loss_function, '___________________________')
         if loss_function == 'MSE':
           self.loss = nn.MSELoss()
         elif loss_function == 'cosine':
