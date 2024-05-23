@@ -66,6 +66,11 @@ class opts(object):
                             help= 'coefficient determining the influence of dinov2 on the loss function')
     self.parser.add_argument('--loss_function', default= 'MSE',
                             help = 'type of loss function used')
+
+    self.parser.add_argument('--adapt_to', default='teacher',
+                            help = 'whether features are transformed to the teacher's dimensions or to the students')
+
+    
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
                              help='input height and width. -1 for default from '
