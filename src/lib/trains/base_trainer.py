@@ -28,7 +28,10 @@ class dinoModelloss(torch.nn.Module):
     self.model = model
     self.loss_function = opt.loss_function 
     self.loss = DistillationLoss(device = opt.device, loss_function = self.loss_function)
-    self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
+    if opt.adapt_to == 'student':
+      self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
+    elif opt.adapt_to == 'teacher':
+      self.adapter = HRNetDINO2Adapter(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
@@ -53,7 +56,7 @@ class BaseTrainer(object):
     self.model_with_loss = ModleWithLoss(model, self.loss)
     self.teacher_with_loss = dinoModelloss(self.teacher, opt)
     self.optimizer.add_param_group({'params': self.loss.parameters()})
-    if opt.loss_function == 'MSE':
+    if opt.train_params == 'on':
       self.optimizer.add_param_group({'params': self.teacher_with_loss.adapter.parameters()})
 
 
