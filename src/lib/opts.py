@@ -67,9 +67,10 @@ class opts(object):
     self.parser.add_argument('--loss_function', default= 'MSE',
                             help = 'type of loss function used')
 
-    self.parser.add_argument('--adapt_to', default='teacher',
-                            help = 'whether features are transformed to the teacher's dimensions or to the students')
-
+    self.parser.add_argument('--adapt_to', default='teacher', help = 'whether features are transformed to the teachers dimensions or to the students')
+                            
+    self.parser.add_argument('--train_param', default='on',
+                            help = 'whether the adapters parameters should be trained')
     
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
