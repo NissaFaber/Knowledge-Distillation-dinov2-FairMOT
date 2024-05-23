@@ -75,7 +75,7 @@ class DINO2HRNetAdapter(nn.Module):
 
 
 class HRNetDINO2Adapter(nn.Module):
-    def __init__(self, opt, target_shape=(768, 77, 43), device='cuda'):
+    def __init__(self, opt, target_shape=(768, 77, 43), device='0'):
         super().__init__()
         input_shape = (270, 152, 272)
         hidden_size = dinov2_models[opt.dinov2][1]
