@@ -119,12 +119,8 @@ class DistillationLoss(nn.Module):
           teacher_features, student_features = teacher_features.to(self.device), student_features.to(self.device)
           return self.loss(student_features, teacher_features).to(self.device)
         elif self.loss_function == 'cosine':
-          target = teacher_features.shape[0]
-          # print(target,'_____________________')
           teacher_features, student_features = teacher_features.to(self.device), student_features.to(self.device)
           input1_flat = student_features.view(student_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
           input2_flat = teacher_features.view(teacher_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
-
-          # print(self.loss(input1_flat, input2_flat, target=torch.ones(1).to(self.device)), '___________________________________________________')
-          return self.loss(input1_flat, input2_flat, target=torch.ones(1).to(self.device))
+          return self.loss(input1_flat, input2_flat, target=torch.ones(teacher_features.shape[0]).to(self.device))
           
