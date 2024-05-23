@@ -74,7 +74,7 @@ class DINO2HRNetAdapter(nn.Module):
         return x
 
 
-# class HRNetDINO2Adapter(nn.Module):
+class HRNetDINO2Adapter(nn.Module):
     def __init__(self, opt, target_shape=(768, 77, 43), device='cuda'):
         super().__init__()
         input_shape = (270, 152, 272)
@@ -120,7 +120,7 @@ class DistillationLoss(nn.Module):
           return self.loss(student_features, teacher_features).to(self.device)
         elif self.loss_function == 'cosine':
           teacher_features, student_features = teacher_features.to(self.device), student_features.to(self.device)
-          input1_flat = student_features.view(student_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
-          input2_flat = teacher_features.view(teacher_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
+          input2_flat = student_features.view(student_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
+          input1_flat = teacher_features.view(teacher_features.size(0), -1)  # Shape: [batch_size, 270 * 152 * 272]
           return self.loss(input1_flat, input2_flat, target=torch.ones(teacher_features.shape[0]).to(self.device))
           
