@@ -61,24 +61,23 @@ class DINO2HRNetAdapter(nn.Module):
         x = self.adaptive_pool(x)  # Final output size [B, 270, 152, 272]
         return x
 
-
 class HRNetDINO2Adapter(nn.Module):
-    def __init__(self, opt, target_shape=(768, 77, 43), device='0'):
+    def __init__(self, opt, target_shape=(768, 77, 43), device='cuda'):
         super().__init__()
         input_shape = (270, 152, 272)
-        hidden_size = dinov2_models[opt.dinov2][1]
+        hidden_size = dinov2_models[opt.dinov2][1]  # Assuming hidden_size is 768 for DINOv2
         self.input_channels, self.input_height, self.input_width = input_shape
         self.target_channels, self.target_height, self.target_width = target_shape
         
+
         # Convolution to increase channel depth to hidden_size
         self.channel_increase_conv = nn.Conv2d(self.input_channels, hidden_size, kernel_size=(1, 1), stride=1).to(device)
 
         # Downsampling layer to decrease resolution
-        self.downsample = nn.Upsample(size=(77, 43), mode='bilinear', align_corners=False).to(device)  # Downsample to the target size
+        self.downsample = nn.Upsample(size=(self.target_height, self.target_width), mode='bilinear', align_corners=False).to(device)  # Downsample to the target size
 
     def forward(self, x):
         # x shape: [batch, channels, height, width] = [B, 270, 152, 272]
-        
         # Adjust channel dimensions
         x = self.channel_increase_conv(x)  # Increase channels [B, hidden_size, 152, 272]
 
@@ -86,7 +85,6 @@ class HRNetDINO2Adapter(nn.Module):
         x = self.downsample(x)  # Downsample to target size [B, hidden_size, 77, 43]
 
         return x
-
 
 class DistillationLoss(nn.Module):
     def __init__(self, device=0, loss_function='MSE'):
