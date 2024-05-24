@@ -7,7 +7,7 @@ import torch
 from progress.bar import Bar
 from models.data_parallel import DataParallel
 from utils.utils import AverageMeter
-from .dinov2 import Dinov2, DINO2HRNetAdapter, DistillationLoss
+from .dinov2 import Dinov2, DINO2HRNetAdapter, DistillationLoss, HRNetDINO2Adapter
 
 
 class ModleWithLoss(torch.nn.Module):
@@ -26,18 +26,22 @@ class dinoModelloss(torch.nn.Module):
   def __init__(self, model, opt):
     super(dinoModelloss, self).__init__()
     self.model = model
+    self.opt = opt
     self.loss_function = opt.loss_function 
     self.loss = DistillationLoss(device = opt.device, loss_function = self.loss_function)
-    if opt.adapt_to == 'student':
+    if self.opt.adapt_to == 'student':
       self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
-    elif opt.adapt_to == 'teacher':
+    elif self.opt.adapt_to == 'teacher':
       self.adapter = HRNetDINO2Adapter(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
-    if self.loss_function == 'MSE':
+    if self.loss_function == 'MSE' and self.opt.adapt_to == 'student':
       hrnet_compatible_outputs = self.adapter(outputs)
       loss = self.loss(hrnet_compatible_outputs, embeddings)
+    elif self.loss_function == 'MSE' and self.opt.adapt_to == 'teacher':
+      dinov2_competible_embeddings = self.adapter(embeddings)
+      loss = self.loss(outputs, dinov2_competible_embeddings)
     elif self.loss_function == 'cosine':
       loss = self.loss(hrnet_compatible_outputs, embeddings)
     return loss
@@ -56,8 +60,7 @@ class BaseTrainer(object):
     self.model_with_loss = ModleWithLoss(model, self.loss)
     self.teacher_with_loss = dinoModelloss(self.teacher, opt)
     self.optimizer.add_param_group({'params': self.loss.parameters()})
-    if opt.train_params == 'on':
-      self.optimizer.add_param_group({'params': self.teacher_with_loss.adapter.parameters()})
+    self.optimizer.add_param_group({'params': self.teacher_with_loss.adapter.parameters()})
 
 
   def set_device(self, gpus, chunk_sizes, device):
