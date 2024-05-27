@@ -27,7 +27,8 @@ class Dinov2(nn.Module):
     def forward(self, batch_images):
         inputs = self.feature_extractor(images=batch_images['input'], return_tensors="pt", padding=True)
         inputs = {k: v.to(self.device) for k, v in inputs.items()}
-        outputs = self.model(**inputs)
+        with torch.no_grad():
+          outputs = self.model(**inputs)
         features = outputs[0][0]
         return features
 
