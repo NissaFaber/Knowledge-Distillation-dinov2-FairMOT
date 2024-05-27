@@ -41,13 +41,13 @@ class DINO2HRNetAdapter(nn.Module):
         self.target_channels, self.target_height, self.target_width = target_shape
         
         # Upsampling layer to increase resolution
-        self.upsample = nn.Upsample(size=(152, 224), mode='bilinear', align_corners=False).to(device)  # Upsample to an intermediate size
+        self.upsample = nn.Upsample(size=(152, 272), mode='bilinear', align_corners=False).to(device)  # Upsample to an intermediate size
 
         # Convolution to reduce channel depth and adjust to the target channel depth
         self.channel_adjust_conv = nn.Conv2d(hidden_size, self.target_channels, kernel_size=(1, 1), stride=1).to(device)
 
         # Adaptive pooling to match the exact target dimensions
-        self.adaptive_pool = nn.AdaptiveAvgPool2d((self.target_height, self.target_width)).to(device)
+        # self.adaptive_pool = nn.AdaptiveAvgPool2d((self.target_height, self.target_width)).to(device)
 
     def forward(self, x):
         # x shape: [batch, channels, height, width] = [B, 768, 77, 43]
@@ -59,7 +59,7 @@ class DINO2HRNetAdapter(nn.Module):
         x = self.channel_adjust_conv(x)  # Reduce channels [B, 270, 152, 224]
 
         # Adaptive pool to target dimensions
-        x = self.adaptive_pool(x)  # Final output size [B, 270, 152, 272]
+        # x = self.adaptive_pool(x)  # Final output size [B, 270, 152, 272]
         return x
 
 class HRNetDINO2Adapter(nn.Module):
