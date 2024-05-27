@@ -71,6 +71,8 @@ class opts(object):
                             
     self.parser.add_argument('--train_param', default='on',
                             help = 'whether the adapters parameters should be trained')
+    self.parser.add_argument('--lora', default=False,
+                            help = 'whether LoRa fine-tuning is part of the process')
     
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
