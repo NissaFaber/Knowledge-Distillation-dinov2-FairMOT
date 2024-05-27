@@ -63,8 +63,15 @@ class opts(object):
     self.parser.add_argument('--dinov2', default='base',
                              help='What dinov2 model is used')
     self.parser.add_argument('--alpha', type=float, default=1,
-                            help= 'coeficient determining the influence of dinov2 on the loss function')
+                            help= 'coefficient determining the influence of dinov2 on the loss function')
+    self.parser.add_argument('--loss_function', default= 'MSE',
+                            help = 'type of loss function used')
 
+    self.parser.add_argument('--adapt_to', default='teacher', help = 'whether features are transformed to the teachers dimensions or to the students')
+                            
+    self.parser.add_argument('--train_param', default='on',
+                            help = 'whether the adapters parameters should be trained')
+    
     # input
     self.parser.add_argument('--input_res', type=int, default=-1, 
                              help='input height and width. -1 for default from '
@@ -130,7 +137,7 @@ class opts(object):
     self.parser.add_argument('--data_cfg', type=str,
                              default='../src/lib/cfg/data.json',
                              help='load data from cfg')
-    self.parser.add_argument('--data_dir', type=str, default='/content')
+    self.parser.add_argument('--data_dir', type=str, default='/home/nfaber/repo/dataset')
 
     # loss
     self.parser.add_argument('--mse_loss', action='store_true',
