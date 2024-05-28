@@ -87,6 +87,53 @@ class HRNetDINO2Adapter(nn.Module):
 
         return x
 
+import torch
+from torch import nn
+
+class HRNetDINO2AdapterBIG(nn.Module):
+    def __init__(self, opt, target_shape=(768, 77, 43), device='cuda'):
+        super().__init__()
+        input_shape = (270, 152, 272)
+        hidden_size = dinov2_models[opt.dinov2][1]  # Assuming hidden_size is 768 for DINOv2
+        self.input_channels, self.input_height, self.input_width = input_shape
+        self.target_channels, self.target_height, self.target_width = target_shape
+
+        # Convolution to increase channel depth to hidden_size
+        self.channel_increase_conv = nn.Conv2d(self.input_channels, hidden_size, kernel_size=(1, 1), stride=1).to(device)
+        self.bn1 = nn.BatchNorm2d(hidden_size).to(device)
+        self.relu1 = nn.ReLU().to(device)
+
+        # Additional convolutional layer for further transformation
+        self.extra_conv = nn.Conv2d(hidden_size, hidden_size, kernel_size=(3, 3), padding=1).to(device)
+        self.bn2 = nn.BatchNorm2d(hidden_size).to(device)
+        self.relu2 = nn.ReLU().to(device)
+
+        # Downsampling layer to decrease resolution
+        self.downsample = nn.Upsample(size=(self.target_height, self.target_width), mode='bilinear', align_corners=False).to(device)
+
+    def forward(self, x):
+        # x shape: [batch, channels, height, width] = [B, 270, 152, 272]
+        
+        # Adjust channel dimensions
+        x = self.relu1(self.bn1(self.channel_increase_conv(x)))  # [B, hidden_size, 152, 272]
+
+        # Additional convolutional layer
+        x = self.relu2(self.bn2(self.extra_conv(x)))  # [B, hidden_size, 152, 272]
+
+        # Downsample spatial dimensions
+        x = self.downsample(x)  # Downsample to target size [B, hidden_size, 77, 43]
+
+        return x
+
+# Example usage
+# opt = type('opt', (object,), {'device': 'cuda' if torch.cuda.is_available() else 'cpu', 'dinov2': 'base'})
+# adapter = HRNetDINO2Adapter(opt)
+# x = torch.randn(1, 270, 152, 272).to(opt.device)  # Example input
+# output = adapter(x)
+# print(output.shape)  # Should be [1, 768, 77, 43]
+
+
+
 class DistillationLoss(nn.Module):
     def __init__(self, device=0, loss_function='MSE'):
         super().__init__()
