@@ -7,7 +7,7 @@ import torch
 from progress.bar import Bar
 from models.data_parallel import DataParallel
 from utils.utils import AverageMeter
-from .dinov2 import Dinov2, DINO2HRNetAdapter, DistillationLoss, HRNetDINO2Adapter
+from .dinov2 import Dinov2, DINO2HRNetAdapter, DistillationLoss, HRNetDINO2AdapterBIG
 
 
 class ModleWithLoss(torch.nn.Module):
@@ -32,7 +32,7 @@ class dinoModelloss(torch.nn.Module):
     if self.opt.adapt_to == 'student':
       self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
     elif self.opt.adapt_to == 'teacher':
-      self.adapter = HRNetDINO2Adapter(opt, device = opt.device)
+      self.adapter = HRNetDINO2AdapterBIG(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
