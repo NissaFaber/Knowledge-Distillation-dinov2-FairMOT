@@ -101,6 +101,8 @@ class opts(object):
     self.parser.add_argument('--trainval', action='store_true',
                              help='include validation in training and '
                                   'test on test set')
+    self.parser.add_argument('multi_layer', defeault=True,
+                            help='A more complex version of the feature adapter')
 
     # test
     self.parser.add_argument('--K', type=int, default=500,
