@@ -46,7 +46,8 @@ class dinoModelloss(torch.nn.Module):
       dinov2_competible_embeddings = self.adapter(embeddings)
       loss = self.loss(outputs, dinov2_competible_embeddings)
     elif self.loss_function == 'cosine':
-      loss = self.loss(hrnet_compatible_outputs, embeddings)
+      dinov2_competible_embeddings = self.adapter(embeddings)
+      loss = self.loss(outputs, dinov2_competible_embeddings)
     return loss
     
 
