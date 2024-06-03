@@ -32,7 +32,10 @@ class dinoModelloss(torch.nn.Module):
     if self.opt.adapt_to == 'student':
       self.adapter = DINO2HRNetAdapter(opt, device = opt.device)
     elif self.opt.adapt_to == 'teacher':
-      self.adapter = HRNetDINO2AdapterBIG(opt, device = opt.device)
+      if self.opt.multi_layer:
+        self.adapter = HRNetDINO2AdapterBIG(opt, device = opt.device)
+      else:
+        self.adapter = HRNetDINO2Adapter(opt, device = opt.device)
 
   def forward(self, batch, embeddings):
     outputs = self.model(batch)
