@@ -1,13 +1,13 @@
 # FairMOT_distillation_knowledge
 Use python 3.10.12
-
+```
 conda create -n MOT
 conda activate MOT
 conda install pytorch
 cd ${FAIRMOT_ROOT}
 pip install cython
 pip install -r requirements.txt
-
+```
 ## Data preparation
 
 * **CrowdHuman**
@@ -109,35 +109,10 @@ The model of the light version 'fairmot_yolov5s' can be downloaded here:  [[Goog
 ## Tracking
 * The default settings run tracking on the validation dataset from 2DMOT15. Using the baseline model, you can run:
 ```
-cd src
-python track.py mot --load_model ../models/fairmot_dla34.pth --conf_thres 0.6
-```
-to see the tracking results (76.5 MOTA and 79.3 IDF1 using the baseline model). You can also set save_images=True in src/track.py to save the visualization results of each frame. 
-* For ablation study, we evaluate on the other half of the training set of MOT17, you can run:
-```
-cd src
-python track_half.py mot --load_model ../exp/mot/mix_mot17_half_dla34.pth --conf_thres 0.4 --val_mot17 True
-```
-If you use our pretrained model 'mix_mot17_half_dla34.pth', you can get 69.1 MOTA and 72.8 IDF1. 
-* To get the txt results of the test set of MOT16 or MOT17, you can run:
-```
-cd src
-python track.py mot --test_mot17 True --load_model ../models/fairmot_dla34.pth --conf_thres 0.4
-python track.py mot --test_mot16 True --load_model ../models/fairmot_dla34.pth --conf_thres 0.4
-```
-* To run tracking using the light version of FairMOT (68.5 MOTA on the test of MOT17), you can run:
-```
-cd src
-python track.py mot --test_mot17 True --load_model ../models/fairmot_yolov5s.pth --conf_thres 0.4 --arch yolo --reid_dim 64
-```
-and send the txt files to the [MOT challenge](https://motchallenge.net) evaluation server to get the results. (You can get the SOTA results 73+ MOTA on MOT17 test set using the baseline model 'fairmot_dla34.pth'.)
+See scripts
 
-* To get the SOTA results of 2DMOT15 and MOT20, run the tracking code:
 ```
-cd src
-python track.py mot --test_mot15 True --load_model your_mot15_model.pth --conf_thres 0.3
-python track.py mot --test_mot20 True --load_model your_mot20_model.pth --conf_thres 0.3
-```
+
 Results of the test set all need to be evaluated on the MOT challenge server. You can see the tracking results on the training set by setting --val_motxx True and run the tracking code. We set 'conf_thres' 0.4 for MOT16 and MOT17. We set 'conf_thres' 0.3 for 2DMOT15 and MOT20. 
 
 ## Demo
