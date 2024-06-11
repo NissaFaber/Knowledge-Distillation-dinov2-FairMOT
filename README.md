@@ -10,12 +10,9 @@ pip install -r requirements.txt
 ```
 ## Data preparation
 
-* **CrowdHuman**
-The CrowdHuman dataset can be downloaded from their [official webpage](https://www.crowdhuman.org). After downloading, you should prepare the data in the following structure:
-```
-* **MOT17 and MOT20** 
-[2DMOT15](https://motchallenge.net/data/2D_MOT_2015/) and [MOT20](https://motchallenge.net/data/MOT20/) can be downloaded from the official webpage of MOT challenge. After downloading, you should prepare the data in the following structure:
-```
+* **MOT17, MOT20 & Dancetrack** 
+[2DMOT15](https://motchallenge.net/data/MOT17/) and [MOT20](https://motchallenge.net/data/MOT20/) can be downloaded from the official webpage of MOT challenge. After downloading, you should prepare the data in the following structure:
+
 ```
 MOT17
    |——————images
