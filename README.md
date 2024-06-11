@@ -11,7 +11,7 @@ pip install -r requirements.txt
 ## Data preparation
 
 * **MOT17, MOT20 & Dancetrack** 
-[2DMOT15](https://motchallenge.net/data/MOT17/) and [MOT20](https://motchallenge.net/data/MOT20/) can be downloaded from the official webpage of MOT challenge. After downloading, you should prepare the data in the following structure:
+[MOT17](https://motchallenge.net/data/MOT17/) and [MOT20](https://motchallenge.net/data/MOT20/), [DanceTrack](https://github.com/DanceTrack/DanceTrack) can be downloaded from the official webpage of MOT challenge. After downloading, you should prepare the data in the following structure:
 
 ```
 MOT17
