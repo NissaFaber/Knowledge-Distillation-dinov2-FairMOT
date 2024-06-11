@@ -46,13 +46,15 @@ Dancetrack
             └——————train(empty)
             └——————val(empty)
 ```
-```
+
 Then, you can change the seq_root and label_root in src/gen_labels_17.py and src/gen_labels_20.py and run:
+
 ```
 cd src
 python gen_labels_17.py
 python gen_labels_20.py
 ```
+
 to generate the labels of 2DMOT15 and MOT20. The seqinfo.ini files of 2DMOT15 can be downloaded here [[Google]](https://drive.google.com/open?id=1kJYySZy7wyETH4fKMzgJrYUrTfxKlN1w), [[Baidu],code:8o0w](https://pan.baidu.com/s/1zb5tBW7-YTzWOXpd9IzS0g).
 
 ## Pretrained models and baseline model
@@ -66,6 +68,7 @@ ${FAIRMOT_ROOT}
            └——————hrnetv2_w32_imagenet_pretrained.pth
            └——————hrnetv2_w18_imagenet_pretrained.pth
 ```
+
 * **Baseline model**
 
 Our baseline FairMOT model (DLA-34 backbone) is pretrained on the CrowdHuman for 60 epochs with the self-supervised learning approach and then trained on the MIX dataset for 30 epochs. The models can be downloaded here: 
