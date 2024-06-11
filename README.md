@@ -16,6 +16,7 @@ The CrowdHuman dataset can be downloaded from their [official webpage](https://w
 * **MOT17 and MOT20** 
 [2DMOT15](https://motchallenge.net/data/2D_MOT_2015/) and [MOT20](https://motchallenge.net/data/MOT20/) can be downloaded from the official webpage of MOT challenge. After downloading, you should prepare the data in the following structure:
 ```
+```
 MOT17
    |——————images
    |        └——————train
@@ -44,6 +45,7 @@ Dancetrack
    └——————labels_with_ids
             └——————train(empty)
             └——————val(empty)
+```
 ```
 Then, you can change the seq_root and label_root in src/gen_labels_17.py and src/gen_labels_20.py and run:
 ```
