@@ -1,5 +1,7 @@
 # FairMOT_distillation_knowledge
 Use python 3.10.12
+
+If you want to use the regular FairMOT version go to the snellius branch!
 ```
 conda create -n MOT
 conda activate MOT
