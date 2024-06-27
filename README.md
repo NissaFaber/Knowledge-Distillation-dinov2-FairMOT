@@ -86,7 +86,7 @@ The data annotation of MOT20 is a little different from MOT17, the coordinates o
 ## Tracking (evaluating)
 * The default settings run tracking on the validation dataset from 2DMOT15. Using the baseline model, you can run:
 ```
-See scripts
+See scripts in 'snellius jobs' folder.
 
 ```
 
