@@ -73,7 +73,8 @@ ${FAIRMOT_ROOT}
 ## Training
 * Download the training data
 * Change the dataset root directory 'root' in src/lib/cfg/data.json and 'data_dir' in src/lib/opts.py
-* See snellius script folder
+* See snellius script folder.
+
 
 * Train on MOT20:
 The data annotation of MOT20 is a little different from MOT17, the coordinates of the bounding boxes are all inside the image, so we need to uncomment line 313 to 316 in the dataset file src/lib/datasets/dataset/jde.py:
