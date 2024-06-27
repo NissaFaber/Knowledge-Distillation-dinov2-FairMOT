@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=multilayer
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --time=03:00:00
+#SBATCH --output=slurm_output_%A.out
+
+module purge
+module load 2023
+module load Anaconda3/2023.07-2
+
+
+
+# Activate your environment
+source activate mot
+# Check whether the GPU is available
+cd repo/Thesis/src
+
+echo start training
+srun python -u train.py mot  --arch hrnet_18 --gpus 0 --load_model '/home/nfaber/repo/models/hrnetv2_w18_imagenet_pretrained.pth' --data_cfg '../src/lib/cfg/mot17_half.json' --num_epochs '10' --batch_size 1 --num_workers 12 --pretrainedHrnet True --loss_function 'cosine' --dinov2 base --alpha 0.50 --adapt_to teacher --True --multi_layer True
+echo training done
+
+echo start eval
+srun python -u track_half.py mot  --arch 'hrnet_18' --gpus 0 --load_model '/home/nfaber/repo/Thesis/exp/mot/multi_half/model_last.pth'  --val_mot17 True  --conf_thres 0.4  --pretrainedHrnet False
+
+echo done
+

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=mot20_baseline
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --time=15:00:00
+#SBATCH --output=result_mot20_baseline
+
+module purge
+module load 2023
+module load Anaconda3/2023.07-2
+
+
+
+# Activate your environment
+source activate mot
+# Check whether the GPU is available
+cd repo/nodk/Thesis/src
+
+echo start training
+srun python -u train.py mot  --arch hrnet_18 --gpus 0 --load_model '/home/nfaber/repo/models/hrnetv2_w18_imagenet_pretrained.pth' --data_cfg '../src/lib/cfg/mot20_val.json' --num_epochs '20' --batch_size 4 --num_workers 12 --pretrainedHrnet True --exp_id 'mot20_baseline'
+echo training done
+
+echo start eval
+srun python -u track.py mot  --arch 'hrnet_18' --gpus 0 --load_model '/home/nfaber/repo/nodk/Thesis/exp/mot/mot20_baseline/model_last.pth'  --val_mot20 True  --conf_thres 0.3 --pretrainedHrnet False
+
+echo done
+

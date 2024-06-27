@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=mse_loss_half
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --time=03:00:00
+#SBATCH --output=result_mse_half
+
+module purge
+module load 2023
+module load Anaconda3/2023.07-2
+
+
+
+# Activate your environment
+source activate mot
+# Check whether the GPU is available
+cd
+cd repo/Thesis/src
+
+
+echo start eval
+srun python -u track_half.py mot  --arch 'hrnet_18' --gpus 0 --load_model '/home/nfaber/repo/Thesis/exp/mot/mse_loss_half/model_10.pth'  --val_mot17 True  --conf_thres 0.4  --pretrainedHrnet False
+echo done
+

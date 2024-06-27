@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#SBATCH --partition=gpu
+#SBATCH --gpus=1
+#SBATCH --job-name=fish_eval
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=18
+#SBATCH --time=01:00:00
+#SBATCH --output=result_fish_demo
+
+module purge
+module load 2023
+module load Anaconda3/2023.07-2
+
+
+
+# Activate your environment
+source activate mot
+# Check whether the GPU is available
+cd repo/nodk/Thesis/src
+
+
+
+
+echo start eval
+srun python -u demo.py mot  --arch 'hrnet_18' --gpus 0 --load_model '/home/nfaber/repo/nodk/Thesis/exp/mot/fish_baseline/model_last.pth'  --input-video '../videos/116_2.mp4'  --conf_thres 0.3  --pretrainedHrnet False
+
+echo done
+
